@@ -1,5 +1,7 @@
 # Ammeter Testing Framework
 
+[![tests](https://github.com/Kfirul/Test_QA_expanded/actions/workflows/tests.yml/badge.svg)](https://github.com/Kfirul/Test_QA_expanded/actions/workflows/tests.yml)
+
 A configuration-driven Quality-Assurance framework for testing current-measurement
 systems built on three ammeter emulators (**Greenlee**, **ENTES**, **CIRCUTOR**).
 Each emulator runs as a TCP socket server on its own thread and answers
