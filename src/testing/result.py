@@ -15,6 +15,9 @@ class TestResult:
     statistics and metadata. Serialises to a self-contained ``result.json`` so
     runs can be archived, retrieved and compared later.
     """
+    # Not a pytest test class despite the "Test" prefix.
+    __test__ = False
+
     ammeter_type: str
     command: str
     port: int

@@ -25,6 +25,32 @@ py examples/run_tests.py
 Results are written under `results/` (one folder per run + a `comparison.png`
 and `results/logs/`).
 
+### Command-line interface
+
+`cli.py` runs tests and inspects saved runs without editing `config.yaml`:
+
+```sh
+py cli.py run                          # test all ammeters (config defaults)
+py cli.py run -a greenlee -n 50 -f 10  # 50 samples @ 10 Hz, greenlee only
+py cli.py run --errors                 # enable error simulation
+py cli.py run --no-plots -o out        # skip plots, custom output directory
+py cli.py list                         # list saved runs
+py cli.py show results/<run_folder>    # print a saved run's summary
+py cli.py --help                       # full option reference
+```
+
+### Running the tests
+
+```sh
+py -m pip install -r requirements-dev.txt   # adds pytest
+py -m pytest                                # full suite
+py -m pytest -m "not integration"           # fast unit tests only (no sockets)
+```
+
+The suite covers the sampling logic, statistics/comparison, error simulation,
+result archiving and config validation as **unit tests**, plus **integration
+tests** that start the real emulators and run end-to-end.
+
 > On Windows the Microsoft-Store `python` shim may be a no-op; use the `py`
 > launcher as shown. On Linux/Mac use `python3`.
 
@@ -47,7 +73,10 @@ Ports and commands are defined once in `config/config.yaml` and used everywhere.
 ```
 .
 ├── main.py                     # Smoke test: start emulators + one request each
+├── cli.py                      # Command-line interface (run / list / show)
 ├── requirements.txt            # Python dependencies
+├── requirements-dev.txt        # Dev/test dependencies (adds pytest)
+├── pytest.ini                  # pytest configuration
 ├── config/
 │   └── config.yaml             # Single source of truth (ammeters, sampling, analysis, errors)
 ├── Ammeters/                   # Emulator infrastructure (provided; minimally fixed)
@@ -71,6 +100,14 @@ Ports and commands are defined once in `config/config.yaml` and used everywhere.
 │       └── Utils.py            # generate_random_float (used by emulators)
 ├── examples/
 │   └── run_tests.py            # End-to-end demonstration
+├── tests/                      # Unit + integration tests (pytest)
+│   ├── conftest.py             #   Shared fixtures (config, emulators)
+│   ├── test_sampler.py         #   Sampling plan resolution + collection loop
+│   ├── test_analyzer.py        #   Statistics, consistency, comparison
+│   ├── test_error_injector.py  #   Error simulation
+│   ├── test_result.py          #   Save/load/list archiving
+│   ├── test_config.py          #   Config loading + validation
+│   └── test_integration.py     #   End-to-end against live emulators
 ├── results/                    # Generated: per-run folders, plots, logs
 └── docs/
     └── DESIGN.md               # Design decisions & rationale

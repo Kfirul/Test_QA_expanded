@@ -33,9 +33,6 @@ class AmmeterTestFramework:
         self._retries = int(self._conn.get("retries", 1))
         self._retry_delay = self._conn.get("retry_delay_seconds", 0.0)
 
-        self._results_dir = self.config.get("result_management", {}).get("output_dir", "results")
-        self._save_raw = self.config.get("result_management", {}).get("save_raw_samples", True)
-
         self._emulators: Optional[EmulatorManager] = None
         if start_emulators:
             self.start_emulators()
@@ -113,7 +110,8 @@ class AmmeterTestFramework:
             metadata={"failed_samples": len(failures), "host": self._host},
         )
 
-        run_dir = result.save(self._results_dir, self._save_raw)
+        rm = self.config.get("result_management", {})
+        run_dir = result.save(rm.get("output_dir", "results"), rm.get("save_raw_samples", True))
         self._maybe_plot(result, run_dir)
         self.logger.info(f"[{ammeter_type}] Saved run {result.run_id} -> {run_dir}")
         return result
@@ -152,8 +150,9 @@ class AmmeterTestFramework:
         viz = self.config.get("analysis", {}).get("visualization", {})
         if viz.get("enabled") and "comparison" in viz.get("plot_types", []):
             try:
-                out = os.path.join(self._results_dir, "comparison.png")
-                os.makedirs(self._results_dir, exist_ok=True)
+                results_dir = self.config.get("result_management", {}).get("output_dir", "results")
+                out = os.path.join(results_dir, "comparison.png")
+                os.makedirs(results_dir, exist_ok=True)
                 visualizer.plot_comparison(results, out)
                 comparison["plot"] = out
             except Exception as exc:  # noqa: BLE001

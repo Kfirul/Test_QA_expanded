@@ -1,5 +1,5 @@
 import random
-from typing import Callable
+from typing import Callable, Optional
 
 
 class ErrorInjector:
@@ -14,7 +14,7 @@ class ErrorInjector:
     """
 
     def __init__(self, drop_rate: float = 0.0, corrupt_rate: float = 0.0,
-                 seed: int = None):
+                 seed: Optional[int] = None):
         self.drop_rate = float(drop_rate)
         self.corrupt_rate = float(corrupt_rate)
         self._rng = random.Random(seed)
