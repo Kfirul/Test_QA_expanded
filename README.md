@@ -51,6 +51,9 @@ The suite covers the sampling logic, statistics/comparison, error simulation,
 result archiving and config validation as **unit tests**, plus **integration
 tests** that start the real emulators and run end-to-end.
 
+The suite also runs automatically in CI on every push/PR to `main`
+(GitHub Actions, Python 3.10–3.12) — see `.github/workflows/tests.yml`.
+
 > On Windows the Microsoft-Store `python` shim may be a no-op; use the `py`
 > launcher as shown. On Linux/Mac use `python3`.
 
