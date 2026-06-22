@@ -1,37 +1,30 @@
-import threading
-import time
+"""
+Starts the three ammeter emulators and requests one measurement from each.
 
-from Ammeters.Circutor_Ammeter import CircutorAmmeter
-from Ammeters.Entes_Ammeter import EntesAmmeter
-from Ammeters.Greenlee_Ammeter import GreenleeAmmeter
+This is the minimal "make it work" entry point required by the exercise. The
+ports and commands are read from config/config.yaml so they stay consistent
+with the rest of the framework.
+
+Run:  py main.py   (Windows)   or   python3 main.py
+"""
 from Ammeters.client import request_current_from_ammeter
+from src.utils.config import load_config
+from src.testing.emulator_manager import EmulatorManager
 
 
-def run_greenlee_emulator():
-    greenlee = GreenleeAmmeter(5001)
-    greenlee.start_server()
+def main():
+    config = load_config()
+    ammeters = config["ammeters"]
 
-def run_entes_emulator():
-    entes = EntesAmmeter(5002)
-    entes.start_server()
+    # Start every configured emulator and wait until the ports are accepting
+    # connections (no fragile time.sleep guesswork).
+    manager = EmulatorManager(ammeters, host=config["testing"]["connection"]["host"])
+    manager.start()
 
-def run_circutor_emulator():
-    circutor = CircutorAmmeter(5003)
-    circutor.start_server()
+    # Request one measurement from each ammeter using its exact command.
+    for name, spec in ammeters.items():
+        request_current_from_ammeter(spec["port"], spec["command"].encode("utf-8"))
+
 
 if __name__ == "__main__":
-    # Start each ammeter in a separate thread
-    threading.Thread(target=run_greenlee_emulator, daemon=True).start()
-    threading.Thread(target=run_entes_emulator, daemon=True).start()
-    threading.Thread(target=run_circutor_emulator, daemon=True).start()
-
-    # This section is commented out because it shouldn't work.
-    # Read the README.md file as well as the source code if you need, and fix the problem.
-
-    # Wait for the servers to start, if you have problem restarting the servers between runs try increasing sleep time.
-    time.sleep(5)
-    # request_current_from_ammeter(5001, b'MEASURE_GREENLEE')  # Request from Greenlee Ammeter
-    # request_current_from_ammeter(5002, b'MEASURE_ENTES')  # Request from ENTES Ammeter
-    # request_current_from_ammeter(5003, b'MEASURE_CIRCUTOR')  # Request from CIRCUTOR Ammeter
-
-    pass
+    main()

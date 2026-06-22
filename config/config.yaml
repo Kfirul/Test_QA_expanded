@@ -1,24 +1,66 @@
-testing:
-  sampling:
-    measurements_count: NULL
-    total_duration_seconds: NULL
-    sampling_frequency_hz: NULL
+# ---------------------------------------------------------------------------
+# Ammeter Testing Framework configuration
+# Everything the framework does is driven from this file (config-driven design).
+# ---------------------------------------------------------------------------
 
+testing:
+  # Sampling is over-determined by these three knobs. The framework resolves
+  # them with this precedence (see src/testing/sampler.py):
+  #   1. frequency + duration  -> count   = round(frequency * duration)
+  #   2. count     + frequency -> interval = 1 / frequency
+  #   3. count     + duration  -> interval = duration / count
+  # Set a value to null to let the framework derive it from the others.
+  sampling:
+    measurements_count: 30          # number of samples to collect
+    total_duration_seconds: 6.0     # target wall-clock length of the run
+    sampling_frequency_hz: 5.0      # samples per second
+
+  # Network behaviour when talking to the emulators.
+  connection:
+    host: localhost
+    timeout_seconds: 5.0            # per-request socket timeout
+    retries: 3                      # retry attempts per failed sample
+    retry_delay_seconds: 0.5
+
+# Each entry maps an ammeter name to the port its emulator listens on and the
+# exact command byte-string it expects. Add a new ammeter here to test it -
+# no code changes required (extensibility requirement).
 ammeters:
-#  greenlee:
-#    port: 5000
-#    command: "MEASURE_GREENLEE -get_measurement"
-#  entes:
-#    port: 5001
-#    command: "MEASURE_ENTES -get_data"
-#  circutor:
-#    port: 5002
-#    command: "MEASURE_CIRCUTOR -get_measurement"
+  greenlee:
+    port: 5000
+    command: "MEASURE_GREENLEE -get_measurement"
+  entes:
+    port: 5001
+    command: "MEASURE_ENTES -get_data"
+  circutor:
+    port: 5002
+    command: "MEASURE_CIRCUTOR -get_measurement -current"
 
 analysis:
   statistical_metrics:
+    - mean
+    - median
+    - std_dev
+    - min
+    - max
+    - coefficient_of_variation
   visualization:
     enabled: true
     plot_types:
+      - histogram
+      - time_series
+      - comparison
+  # Accuracy / reliability comparison across ammeter types (bonus).
+  accuracy_comparison:
+    enabled: true
+
+# Error simulation (bonus). When enabled, injects faults into the sample
+# stream to exercise the framework's error handling.
+error_simulation:
+  enabled: false
+  drop_rate: 0.0        # probability [0..1] a sample read is forced to fail
+  corrupt_rate: 0.0     # probability [0..1] a returned value is corrupted
 
 result_management:
+  output_dir: results   # per-run folders are created under here
+  save_raw_samples: true

@@ -16,6 +16,9 @@ class AmmeterEmulatorBase(ABC):
         The server will run indefinitely, handling one client request at a time.
         """
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+            # Allow quick rebinding of the port between runs, otherwise restarting
+            # the emulators raises "address already in use" (the README warns about this).
+            s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
             s.bind(('localhost', self.port))
             s.listen()
             print(f"{self.__class__.__name__} is running on port {self.port}")
