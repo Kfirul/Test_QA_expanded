@@ -1,3 +1,4 @@
+"""Starts the ammeter emulators on threads and waits until their ports are ready."""
 import socket
 import threading
 import time

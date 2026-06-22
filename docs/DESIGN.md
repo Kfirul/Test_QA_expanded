@@ -46,7 +46,11 @@ plotting logic itself.
 | `src/testing/result.py` | `TestResult` dataclass: run id, metadata, JSON save/load, run listing. |
 | `src/testing/test_framework.py` | The unified API that wires everything together. |
 | `main.py` | Minimal "make it work" entry point. |
+| `cli.py` | Command-line interface (`run` / `list` / `show`) with sampling overrides. |
 | `examples/run_tests.py` | Full end-to-end demonstration. |
+| `tests/` | pytest suite: unit tests per module + integration tests against live emulators. |
+| `pytest.ini` | pytest configuration (pythonpath, markers). |
+| `requirements-dev.txt` | Dev/test dependencies (adds pytest on top of `requirements.txt`). |
 
 ## Key decisions
 
@@ -69,8 +73,16 @@ to each sample's target time so cadence stays accurate even when a read is slow.
 **Reliability instead of absolute accuracy.** The emulators generate random currents with
 no shared ground-truth, so true accuracy cannot be measured. The framework instead
 quantifies *precision/reliability* via the coefficient of variation (CV = σ/μ) and ranks
-ammeters by it — the lowest CV is the most consistent measurement method. This is an honest
-interpretation of the "determine relative accuracy / most reliable method" bonus.
+ammeters by it — the lowest CV is the most consistent measurement method. A 95% confidence
+interval of the mean (`scipy.stats`) is also reported to express how tightly the true mean
+is bounded. This is an honest interpretation of the "determine relative accuracy / most
+reliable method / quantify precision" bonus.
+
+**Testing strategy.** Pure logic (sampling resolution, statistics, comparison, error
+injection, result I/O, config validation) is covered by fast unit tests with no sockets;
+end-to-end behaviour is covered by integration tests (`pytest -m integration`) that start
+the real emulators via a session-scoped fixture and write to a temp directory so the real
+`results/` is never polluted.
 
 **Robust error handling.** Each sample read retries on transient socket errors
 (configurable); a permanently failing sample is recorded (`value=None`) rather than
@@ -88,7 +100,7 @@ the project root regardless of the working directory.
 
 ## Possible extensions
 
-- A CLI (e.g. `argparse`) to pick ammeters/parameters without editing config.
-- Persisting comparisons across historical runs (trend analysis).
+- Persisting comparisons across historical runs (trend analysis / regression detection).
 - A real reference source to enable true accuracy (vs. precision) measurement.
-- Unit tests for `sampler.resolve_sampling` and `analyzer` using synthetic data.
+- A GitHub Actions workflow to run the test suite automatically on every push.
+- Packaging (`pyproject.toml`) so `cli.py` installs as a console entry point.

@@ -1,3 +1,4 @@
+"""Small shared utilities used by the ammeter emulators."""
 import random
 
 def generate_random_float(min_value: float, max_value: float) -> float:

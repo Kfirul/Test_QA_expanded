@@ -113,6 +113,9 @@ Ports and commands are defined once in `config/config.yaml` and used everywhere.
     └── DESIGN.md               # Design decisions & rationale
 ```
 
+Each importable package (`Ammeters/`, `src/`, `src/utils/`, `src/testing/`) also contains
+an `__init__.py` marker (omitted above for brevity).
+
 See `docs/DESIGN.md` for the file-by-file purpose and the reasoning behind the design.
 
 ---
@@ -201,7 +204,7 @@ From `requirements.txt` (installed with `py -m pip install -r requirements.txt`)
 |--------------|-------------------------------------------------------|
 | `pyyaml`     | Reading `config.yaml`                                  |
 | `numpy`      | Statistical computations                              |
-| `scipy`      | Statistical utilities                                 |
+| `scipy`      | 95% confidence interval of the mean (`scipy.stats`)   |
 | `pandas`     | Building the cross-ammeter comparison table           |
 | `matplotlib` | Plotting (headless `Agg` backend)                     |
 | `seaborn`    | Histogram styling                                     |
@@ -213,7 +216,8 @@ matplotlib 3.11.0, seaborn 0.13.2, pyyaml 6.0.3 (Python 3.11).
 
 ## Sample Results
 
-A representative run is committed under `results/`. Each run folder contains:
+A representative set of runs (one per ammeter) is committed under `results/`. Each run
+folder contains:
 
 - `result.json` — full record: run id, config snapshot, raw samples, statistics, metadata.
 - `histogram.png` — distribution of measured current.

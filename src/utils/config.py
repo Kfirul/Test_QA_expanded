@@ -1,3 +1,4 @@
+"""Configuration loading: YAML parsing, project-root path resolution, validation."""
 import os
 import yaml
 from typing import Dict

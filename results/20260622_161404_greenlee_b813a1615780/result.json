@@ -1,0 +1,220 @@
+{
+  "ammeter_type": "greenlee",
+  "command": "MEASURE_GREENLEE -get_measurement",
+  "port": 5000,
+  "run_id": "b813a1615780",
+  "timestamp": "2026-06-22T16:14:04",
+  "sampling_plan": {
+    "count": 30,
+    "interval": 0.2,
+    "frequency": 5.0,
+    "duration": 6.0,
+    "notes": []
+  },
+  "statistics": {
+    "count": 30,
+    "mean": 0.4688867938725046,
+    "median": 0.10361711804035832,
+    "std_dev": 1.117069249150922,
+    "min": 0.019804002053307117,
+    "max": 5.832822779815674,
+    "range": 5.813018777762367,
+    "coefficient_of_variation": 2.3823858205199637,
+    "confidence_interval_95": [
+      0.05176628105578723,
+      0.886007306689222
+    ]
+  },
+  "consistency": {
+    "mean_interval": 0.20001583793080122,
+    "interval_jitter": 0.0003085721224761438
+  },
+  "samples": [
+    {
+      "index": 0,
+      "timestamp": 5.199995939619839e-06,
+      "value": 0.04945124520003769,
+      "error": null
+    },
+    {
+      "index": 1,
+      "timestamp": 0.20044079999206588,
+      "value": 0.1576018869290817,
+      "error": null
+    },
+    {
+      "index": 2,
+      "timestamp": 0.4003672999970149,
+      "value": 0.09446730972854513,
+      "error": null
+    },
+    {
+      "index": 3,
+      "timestamp": 0.6004333999881055,
+      "value": 0.11372457701119726,
+      "error": null
+    },
+    {
+      "index": 4,
+      "timestamp": 0.8003770999930566,
+      "value": 5.832822779815674,
+      "error": null
+    },
+    {
+      "index": 5,
+      "timestamp": 1.0004517999914242,
+      "value": 0.2100117653451365,
+      "error": null
+    },
+    {
+      "index": 6,
+      "timestamp": 1.2008930999872973,
+      "value": 0.09305466005207377,
+      "error": null
+    },
+    {
+      "index": 7,
+      "timestamp": 1.4002982999954838,
+      "value": 0.16349828114427956,
+      "error": null
+    },
+    {
+      "index": 8,
+      "timestamp": 1.6002986999956192,
+      "value": 0.8472372963339541,
+      "error": null
+    },
+    {
+      "index": 9,
+      "timestamp": 1.8002000999986194,
+      "value": 0.08118111194438339,
+      "error": null
+    },
+    {
+      "index": 10,
+      "timestamp": 2.0004324999899836,
+      "value": 0.08005286601414548,
+      "error": null
+    },
+    {
+      "index": 11,
+      "timestamp": 2.2003769999864744,
+      "value": 0.0699972962424115,
+      "error": null
+    },
+    {
+      "index": 12,
+      "timestamp": 2.4006429000000935,
+      "value": 0.02900335405044544,
+      "error": null
+    },
+    {
+      "index": 13,
+      "timestamp": 2.600244399989606,
+      "value": 0.29625761071891044,
+      "error": null
+    },
+    {
+      "index": 14,
+      "timestamp": 2.800278499998967,
+      "value": 0.02518387697579812,
+      "error": null
+    },
+    {
+      "index": 15,
+      "timestamp": 3.000365999992937,
+      "value": 0.044844572359042385,
+      "error": null
+    },
+    {
+      "index": 16,
+      "timestamp": 3.2003694999875734,
+      "value": 2.2936214899715415,
+      "error": null
+    },
+    {
+      "index": 17,
+      "timestamp": 3.4003796999895712,
+      "value": 0.10504851519506513,
+      "error": null
+    },
+    {
+      "index": 18,
+      "timestamp": 3.600396299996646,
+      "value": 0.10218572088565152,
+      "error": null
+    },
+    {
+      "index": 19,
+      "timestamp": 3.8004459999938263,
+      "value": 0.07196267494789049,
+      "error": null
+    },
+    {
+      "index": 20,
+      "timestamp": 4.000525799987372,
+      "value": 0.4327088940981589,
+      "error": null
+    },
+    {
+      "index": 21,
+      "timestamp": 4.200457799990545,
+      "value": 0.19675176755106655,
+      "error": null
+    },
+    {
+      "index": 22,
+      "timestamp": 4.400120999998762,
+      "value": 0.08389199895400304,
+      "error": null
+    },
+    {
+      "index": 23,
+      "timestamp": 4.600523199987947,
+      "value": 0.3171432005695228,
+      "error": null
+    },
+    {
+      "index": 24,
+      "timestamp": 4.8003708999895025,
+      "value": 0.06894797816849112,
+      "error": null
+    },
+    {
+      "index": 25,
+      "timestamp": 5.000224099989282,
+      "value": 1.3235743470004449,
+      "error": null
+    },
+    {
+      "index": 26,
+      "timestamp": 5.201180399992154,
+      "value": 0.019804002053307117,
+      "error": null
+    },
+    {
+      "index": 27,
+      "timestamp": 5.400585899988073,
+      "value": 0.6230765347520714,
+      "error": null
+    },
+    {
+      "index": 28,
+      "timestamp": 5.600491299992427,
+      "value": 0.1934684724557323,
+      "error": null
+    },
+    {
+      "index": 29,
+      "timestamp": 5.800464499989175,
+      "value": 0.04602772970707191,
+      "error": null
+    }
+  ],
+  "metadata": {
+    "failed_samples": 0,
+    "host": "localhost",
+    "python_version": "3.11.0",
+    "platform": "Windows-10-10.0.26200-SP0"
+  }
+}

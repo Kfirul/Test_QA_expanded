@@ -1,9 +1,10 @@
+"""TestResult: per-run record with unique id, metadata, and JSON archiving."""
 import json
 import os
 import platform
 import sys
 import uuid
-from dataclasses import dataclass, field, asdict
+from dataclasses import dataclass, field, asdict, fields
 from datetime import datetime
 from typing import Dict, List, Optional
 
@@ -43,6 +44,22 @@ class TestResult:
     def to_dict(self) -> Dict:
         return asdict(self)
 
+    def summary_text(self) -> str:
+        """Human-readable one-block summary of the run's statistics."""
+        s = self.statistics
+        header = f"{self.ammeter_type} (run {self.run_id}):"
+        if s.get("count", 0) == 0:
+            return f"{header}\n  no valid samples collected."
+        return "\n".join([
+            header,
+            f"  samples : {s['count']}",
+            f"  mean    : {s['mean']:.4f} A",
+            f"  median  : {s['median']:.4f} A",
+            f"  std dev : {s['std_dev']:.4f} A",
+            f"  min/max : {s['min']:.4f} / {s['max']:.4f} A",
+            f"  CV      : {s['coefficient_of_variation']:.4f}",
+        ])
+
     def save(self, output_dir: str = "results", save_raw_samples: bool = True) -> str:
         """Write the run to ``output_dir/<folder_name>/result.json`` and return that folder."""
         run_dir = os.path.join(output_dir, self.folder_name)
@@ -63,7 +80,9 @@ class TestResult:
             path = os.path.join(path, "result.json")
         with open(path, "r", encoding="utf-8") as f:
             data = json.load(f)
-        return cls(**data)
+        # Keep only known fields so unexpected/renamed keys don't break loading.
+        known = {f.name for f in fields(cls)}
+        return cls(**{k: v for k, v in data.items() if k in known})
 
 
 def list_results(output_dir: str = "results") -> List[str]:

@@ -1,3 +1,4 @@
+"""TestLogger: timestamped file + console logging for a test run."""
 import logging
 import os
 from datetime import datetime

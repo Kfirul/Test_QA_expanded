@@ -19,6 +19,12 @@ def test_compute_statistics_known_values():
     assert stats["coefficient_of_variation"] == pytest.approx(math.sqrt(2.5) / 3.0)
 
 
+def test_confidence_interval_brackets_the_mean():
+    stats = compute_statistics([1.0, 2.0, 3.0, 4.0, 5.0])
+    low, high = stats["confidence_interval_95"]
+    assert low < stats["mean"] < high
+
+
 def test_compute_statistics_ignores_none_and_nan():
     stats = compute_statistics([2.0, None, float("nan"), 4.0])
     assert stats["count"] == 2

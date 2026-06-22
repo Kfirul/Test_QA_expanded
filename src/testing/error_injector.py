@@ -1,3 +1,4 @@
+"""Error simulation (bonus): wrap a reader to inject dropped/corrupted samples."""
 import random
 from typing import Callable, Optional
 

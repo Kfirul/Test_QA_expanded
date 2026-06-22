@@ -34,6 +34,15 @@ def test_conflicting_inputs_prefer_frequency_and_duration_with_note():
     assert any("conflict" in note for note in plan.notes)
 
 
+def test_non_positive_inputs_are_ignored():
+    # A count of 0 must not silently be treated as a valid plan; it falls back
+    # to the frequency+duration derivation instead.
+    plan = resolve_sampling(measurements_count=0, total_duration_seconds=2.0,
+                            sampling_frequency_hz=5.0)
+    assert plan.count == 10
+    assert any("non-positive" in note for note in plan.notes)
+
+
 def test_no_inputs_uses_defaults():
     plan = resolve_sampling(None, None, None)
     assert plan.count == 10

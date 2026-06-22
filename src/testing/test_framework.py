@@ -1,10 +1,11 @@
+"""The unified AmmeterTestFramework: orchestrates a full measurement test run."""
 import os
 import time
 from dataclasses import asdict
 from typing import Dict, List, Optional
 
 from Ammeters.client import get_current_measurement
-from src.utils.config import load_config, DEFAULT_CONFIG_PATH
+from src.utils.config import load_config, DEFAULT_CONFIG_PATH, PROJECT_ROOT
 from src.utils.logger import TestLogger
 from src.testing.emulator_manager import EmulatorManager
 from src.testing.error_injector import ErrorInjector
@@ -30,7 +31,7 @@ class AmmeterTestFramework:
         self._conn = self.config["testing"].get("connection", {})
         self._host = self._conn.get("host", "localhost")
         self._timeout = self._conn.get("timeout_seconds", 5.0)
-        self._retries = int(self._conn.get("retries", 1))
+        self._retries = max(1, int(self._conn.get("retries", 1)))
         self._retry_delay = self._conn.get("retry_delay_seconds", 0.0)
 
         self._emulators: Optional[EmulatorManager] = None
@@ -42,6 +43,12 @@ class AmmeterTestFramework:
         self._emulators = EmulatorManager(self.config["ammeters"], host=self._host)
         self._emulators.start()
         self.logger.info("All emulators ready.")
+
+    def _output_dir(self) -> str:
+        """Resolve the configured output dir; relative paths anchor to the project
+        root so results always land in the same place regardless of the cwd."""
+        out = self.config.get("result_management", {}).get("output_dir", "results")
+        return out if os.path.isabs(out) else os.path.join(PROJECT_ROOT, out)
 
     # -- core: one ammeter --------------------------------------------------
 
@@ -111,7 +118,7 @@ class AmmeterTestFramework:
         )
 
         rm = self.config.get("result_management", {})
-        run_dir = result.save(rm.get("output_dir", "results"), rm.get("save_raw_samples", True))
+        run_dir = result.save(self._output_dir(), rm.get("save_raw_samples", True))
         self._maybe_plot(result, run_dir)
         self.logger.info(f"[{ammeter_type}] Saved run {result.run_id} -> {run_dir}")
         return result
@@ -150,7 +157,7 @@ class AmmeterTestFramework:
         viz = self.config.get("analysis", {}).get("visualization", {})
         if viz.get("enabled") and "comparison" in viz.get("plot_types", []):
             try:
-                results_dir = self.config.get("result_management", {}).get("output_dir", "results")
+                results_dir = self._output_dir()
                 out = os.path.join(results_dir, "comparison.png")
                 os.makedirs(results_dir, exist_ok=True)
                 visualizer.plot_comparison(results, out)

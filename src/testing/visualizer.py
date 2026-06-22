@@ -1,20 +1,26 @@
+"""Plot generation: per-run histogram/time-series and a cross-ammeter box-plot."""
+from __future__ import annotations
+
 import os
-from typing import Dict, List
+from typing import TYPE_CHECKING, Dict, List
 
 import matplotlib
 matplotlib.use("Agg")  # headless backend: works on any machine, no display needed
 import matplotlib.pyplot as plt
 import seaborn as sns
 
+if TYPE_CHECKING:  # avoid a runtime import cycle with result.py
+    from src.testing.result import TestResult
+
 sns.set_theme(style="whitegrid")
 
 
-def _values(result) -> List[float]:
+def _values(result: "TestResult") -> List[float]:
     return [s["value"] for s in result.samples
             if s.get("value") is not None and s["value"] == s["value"]]  # drop None/NaN
 
 
-def plot_histogram(result, out_dir: str) -> str:
+def plot_histogram(result: "TestResult", out_dir: str) -> str:
     """Distribution of measured current for a single run."""
     path = os.path.join(out_dir, "histogram.png")
     plt.figure(figsize=(8, 5))
@@ -30,7 +36,7 @@ def plot_histogram(result, out_dir: str) -> str:
     return path
 
 
-def plot_time_series(result, out_dir: str) -> str:
+def plot_time_series(result: "TestResult", out_dir: str) -> str:
     """Measured current over time for a single run."""
     path = os.path.join(out_dir, "time_series.png")
     ts = [s["timestamp"] for s in result.samples if s.get("value") is not None]
@@ -46,7 +52,7 @@ def plot_time_series(result, out_dir: str) -> str:
     return path
 
 
-def plot_comparison(results: Dict[str, "object"], out_path: str) -> str:
+def plot_comparison(results: Dict[str, "TestResult"], out_path: str) -> str:
     """Box-plot comparing the current distributions of multiple ammeters."""
     data, labels = [], []
     for name, res in results.items():

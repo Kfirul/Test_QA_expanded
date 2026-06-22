@@ -1,3 +1,4 @@
+"""Sampling-plan resolution and the timed measurement-collection loop."""
 import time
 from dataclasses import dataclass, field
 from typing import Callable, List, Optional
@@ -27,11 +28,20 @@ def resolve_sampling(measurements_count: Optional[int],
     given and disagree, frequency + duration win and a note is recorded.
     """
     notes: List[str] = []
-    c = measurements_count
-    d = total_duration_seconds
-    f = sampling_frequency_hz
 
-    if c and d and f:
+    # Treat non-positive values as "not provided" (a count/duration/frequency of
+    # zero or less is meaningless) so they don't silently distort the plan.
+    def _positive(value, label):
+        if value is not None and value <= 0:
+            notes.append(f"Ignoring non-positive {label}={value}.")
+            return None
+        return value
+
+    c = _positive(measurements_count, "measurements_count")
+    d = _positive(total_duration_seconds, "total_duration_seconds")
+    f = _positive(sampling_frequency_hz, "sampling_frequency_hz")
+
+    if c is not None and d is not None and f is not None:
         derived = round(f * d)
         if derived != c:
             notes.append(
@@ -40,20 +50,20 @@ def resolve_sampling(measurements_count: Optional[int],
             )
         count = derived
         frequency = f
-    elif f and d:
+    elif f is not None and d is not None:
         count = max(1, round(f * d))
         frequency = f
-    elif c and f:
+    elif c is not None and f is not None:
         count = c
         frequency = f
-    elif c and d:
+    elif c is not None and d is not None:
         count = c
-        frequency = c / d if d > 0 else 1.0
-    elif c:
+        frequency = c / d
+    elif c is not None:
         count = c
         frequency = 1.0
         notes.append("Only count given; defaulting to 1 Hz.")
-    elif d:
+    elif d is not None:
         frequency = 1.0
         count = max(1, round(d))
         notes.append("Only duration given; defaulting to 1 Hz.")

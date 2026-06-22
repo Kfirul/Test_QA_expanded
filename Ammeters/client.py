@@ -1,3 +1,4 @@
+"""Socket client for requesting current measurements from the ammeter emulators."""
 from socket import socket, AF_INET, SOCK_STREAM
 from typing import Union
 

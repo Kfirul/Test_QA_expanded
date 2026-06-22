@@ -1,4 +1,4 @@
-import math
+"""Statistical analysis, sampling-consistency, and cross-ammeter comparison."""
 from typing import Dict, List
 
 import numpy as np
@@ -25,6 +25,15 @@ def compute_statistics(values: List[float]) -> Dict:
     std = float(np.std(arr, ddof=1)) if arr.size > 1 else 0.0
     cv = float(std / mean) if mean != 0 else float("nan")
 
+    # 95% confidence interval of the mean (Student's t) - quantifies how
+    # precisely the true mean current is known from this sample.
+    if arr.size > 1 and std > 0:
+        sem = scipy_stats.sem(arr)
+        low, high = scipy_stats.t.interval(0.95, arr.size - 1, loc=mean, scale=sem)
+        ci_95 = [float(low), float(high)]
+    else:
+        ci_95 = [mean, mean]
+
     return {
         "count": int(arr.size),
         "mean": mean,
@@ -34,6 +43,7 @@ def compute_statistics(values: List[float]) -> Dict:
         "max": float(np.max(arr)),
         "range": float(np.max(arr) - np.min(arr)),
         "coefficient_of_variation": cv,
+        "confidence_interval_95": ci_95,
     }
 
 

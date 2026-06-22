@@ -24,20 +24,6 @@ from src.testing.result import TestResult, list_results
 from src.utils.config import DEFAULT_CONFIG_PATH
 
 
-def _print_stats(name: str, result: TestResult) -> None:
-    s = result.statistics
-    print(f"\n{name} (run {result.run_id}):")
-    if s.get("count", 0) == 0:
-        print("  no valid samples collected.")
-        return
-    print(f"  samples : {s['count']}")
-    print(f"  mean    : {s['mean']:.4f} A")
-    print(f"  median  : {s['median']:.4f} A")
-    print(f"  std dev : {s['std_dev']:.4f} A")
-    print(f"  min/max : {s['min']:.4f} / {s['max']:.4f} A")
-    print(f"  CV      : {s['coefficient_of_variation']:.4f}")
-
-
 def _apply_overrides(framework: AmmeterTestFramework, args: argparse.Namespace) -> None:
     """Apply CLI flags on top of the loaded config before running."""
     sampling = framework.config["testing"]["sampling"]
@@ -61,8 +47,8 @@ def cmd_run(args: argparse.Namespace) -> int:
     framework.start_emulators()
 
     results = framework.run_all(args.ammeter or None)
-    for name, result in results.items():
-        _print_stats(name, result)
+    for result in results.values():
+        print("\n" + result.summary_text())
 
     comparison = framework.compare(results)
     if comparison and comparison.get("ranking"):
@@ -88,7 +74,7 @@ def cmd_show(args: argparse.Namespace) -> int:
         print(f"Path not found: {args.path}", file=sys.stderr)
         return 1
     result = TestResult.load(args.path)
-    _print_stats(result.ammeter_type, result)
+    print(result.summary_text())
     print(f"\n  command : {result.command}")
     print(f"  port    : {result.port}")
     print(f"  when    : {result.timestamp}")
